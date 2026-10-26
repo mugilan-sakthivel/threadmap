@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ThreadMap · Live visual notes for podcasters</title>
+<style>
+  :root { --paper:#fdfdfc; --ink:#160216; --text:#363636; --soft:#6b6b6b; --dash:#e7e7e7; --chip:#f1f1ef; --pink:#ff4de1; --pink-ink:#570152; }
+  body { margin:0; background:var(--paper); color:var(--text); font-family:-apple-system,system-ui,sans-serif; line-height:1.6; }
+  .grid { display:grid; grid-template-columns:320px 1fr; min-height:100vh; }
+  aside { border-right:1px dashed var(--dash); padding:40px 30px; position:sticky; top:0; height:100vh; box-sizing:border-box; }
+  main { padding:40px 48px 64px; max-width:860px; }
+  .brand { font-family:Georgia,serif; font-size:21px; color:var(--ink); }
+  h1 { font-family:Georgia,serif; color:var(--ink); font-size:44px; line-height:1.05; letter-spacing:-.03em; margin:18px 0 10px; }
+  h2 { font-family:Georgia,serif; color:var(--ink); font-size:19px; margin:34px 0 10px; }
+  .tag { display:inline-block; background:#ffa1ff; color:var(--pink-ink); border:1px solid var(--pink); border-radius:60px; padding:3px 12px; font-size:12.5px; }
+  .pill { display:inline-block; border-radius:60px; padding:9px 16px; font-size:14px; text-decoration:none; margin:4px 4px 0 0; }
+  .pink { background:var(--pink); color:var(--pink-ink); } .dark { background:#252525; color:#fff; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; }
+  .card { display:block; background:#fff; border:1px solid #00000014; border-radius:18px; padding:14px 16px; text-decoration:none; color:var(--text); box-shadow:0 10px 30px #0000000a; }
+  .card b { color:var(--ink); display:block; margin-bottom:2px; } .card span { font-size:13px; color:var(--soft); }
+  img { max-width:100%; border:1px solid #ececea; border-radius:14px; }
+  p { font-size:15px; }
+  @media (max-width:820px) { .grid { grid-template-columns:1fr; } aside { position:static; height:auto; border-right:0; border-bottom:1px dashed var(--dash); } main { padding:28px 22px; } }
+</style>
+</head>
+<body>
+<div class="grid">
+<aside>
+  <div class="brand">✳︎ ThreadMap</div>
+  <p style="font-family:Georgia,serif;font-size:24px;color:var(--ink);line-height:1.15;margin:20px 0 8px">Live visual notes for podcasters 🌸</p>
+  <p style="font-size:14px">Listens to your conversation and draws it as you talk: questions, answers, frameworks, and the follow-ups you almost missed.</p>
+  <a class="pill pink" href="prd.html">Read the PRD</a><a class="pill dark" href="mock-ux.html">Mock UX</a>
+  <p style="font-size:12.5px;color:var(--soft);margin-top:28px">Built with Next.js, Excalidraw, Soniox real-time STT and any OpenAI-compatible model. Works in English, Tanglish and Hinglish.</p>
+  <p style="font-size:12.5px"><a href="https://github.com/mugilan-sakthivel/threadmap" style="color:#a3007f">Source on GitHub →</a></p>
+</aside>
+<main>
+  <span class="tag">Speaks Tanglish &amp; Hinglish</span>
+  <h1>Your podcast, drawn live. While you talk.</h1>
+  <p><span style="color:var(--soft)">No more scribbled notes mid-interview.</span> Every question becomes a section; a layered framework becomes a pyramid, a process becomes steps, “X vs Y” becomes a comparison. The AI decides the shape from what is meant, not from keywords.</p>
+  <img src="img/real-podcast-board.jpg" alt="ThreadMap board drawn live from a real podcast episode">
+  <p style="font-size:12.5px;color:var(--soft)">Drawn live from 9 minutes of a real episode (Lex Fridman #440) by a free model. See the <a href="real-podcast-test.html">test report</a>.</p>
+
+  <h2>Project documents</h2>
+  <div class="cards">
+    <a class="card" href="prd.html"><b>PRD</b><span>Problem, users, requirements, shape logic, metrics, risks</span></a>
+    <a class="card" href="mock-ux.html"><b>Mock UX</b><span>Live session, setup, recap and landing screens + design tokens</span></a>
+    <a class="card" href="how-it-works.html"><b>How it works</b><span>Frame-by-frame: words → AI decision → diagram</span></a>
+    <a class="card" href="real-podcast-test.html"><b>Real podcast test</b><span>Replay of a real episode with a live model</span></a>
+    <a class="card" href="implementation.html"><b>Implementation doc</b><span>Architecture, files, edge cases, review fixes</span></a>
+    <a class="card" href="research/idea-validation.html"><b>Idea validation</b><span>Market, competitors, willingness to pay</span></a>
+    <a class="card" href="research/product-plan.html"><b>Product plan</b><span>Features, languages, roadmap, pricing</span></a>
+    <a class="card" href="research/technical-plan.html"><b>Technical plan</b><span>STT choice, LLM, diagram engine, ops contract</span></a>
+    <a class="card" href="research/30-day-plan.html"><b>30-day launch plan</b><span>Build in public, viral video formats, payments</span></a>
+  </div>
+
+  <h2>The app</h2>
+  <img src="img/demo-board.jpg" alt="Live session screen">
+  <p style="font-size:12.5px;color:var(--soft)">Live session: canvas on the left, live transcript and notes on the right, floating controls.</p>
+  <img src="img/setup.jpg" alt="Setup screen">
+</main>
+</div>
+</body>
+</html>
