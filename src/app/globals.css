@@ -1,26 +1,216 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Design tokens (see app-design.html). Language derived from flowjam.com:
+ * warm paper, dashed hairlines, soft serif, pill buttons.
+ */
+@theme {
+  --color-paper: #fdfdfc;
+  --color-card: #ffffff;
+  --color-ink: #160216;
+  --color-text: #363636;
+  --color-mute: #00000073;
+  --color-soft: #6b6b6b;
+  --color-hair: #00000014;
+  --color-dash: #e7e7e7;
+  --color-dot: #d8d8d4;
+  --color-chip: #f1f1ef;
+  --color-pink: #ff4de1;
+  --color-pink-soft: #ffa1ff;
+  --color-pink-ink: #570152;
+  --color-pink-wash: #ffe6fb;
+  --color-speaker: #a3007f;
+  --color-dark: #252525;
+  --color-live: #ff004d;
+  --color-violet: #6831ff;
+  --color-success: #13804b;
+
+  --radius-pill: 60px;
+  --radius-card: 22px;
+  --radius-media: 18px;
+
+  --font-display: var(--font-fraunces), "Gelica", Georgia, serif;
+  --font-ui: var(--font-hanken), system-ui, sans-serif;
+  --font-hand: "Excalifont", "Comic Sans MS", cursive;
+
+  --shadow-pill: 0 12px 12px #0000001a, 0 24px 24px #0000001a, inset 0 0 20px 1px #ffffff33;
+  --shadow-dock: 0 12px 12px #0000001a, 0 24px 24px #0000001a, 0 30px 70px #00000033, inset 0 0 28px 1px #ffffff26;
+  --shadow-soft: 0 1px 0 #00000008, 0 10px 30px #0000000f;
+
+  --ease-fj: cubic-bezier(0.2, 0.68, 0.26, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+  body {
+    background-color: var(--color-paper);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    color: var(--color-text);
+    font-family: var(--font-display);
+    font-variation-settings: "SOFT" 100;
+    -webkit-font-smoothing: antialiased;
+  }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .tm-serif {
+    font-family: var(--font-display);
+    font-variation-settings: "SOFT" 100, "opsz" 72;
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+  }
+  .tm-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: var(--radius-pill);
+    padding: 10px 16px;
+    font-size: 14px;
+    line-height: 20px;
+    white-space: nowrap;
+    border: 1px solid #ffffff1a;
+    transition: transform 0.2s var(--ease-fj), filter 0.2s var(--ease-fj);
+  }
+  .tm-pill:not(:disabled):hover {
+    transform: translateY(-1px);
+    filter: brightness(1.03);
+  }
+  .tm-pill:disabled {
+    opacity: 0.45;
+  }
+  .tm-pill-sm {
+    padding: 6px 12px;
+    font-size: 12.5px;
+  }
+  .tm-pill-pink {
+    background: var(--color-pink);
+    color: var(--color-pink-ink);
+    box-shadow: 0 1px 0 1px #f1f1f157, 0 12px 12px #0000001a, inset 0 0 20px 1px #ffffff33;
+  }
+  .tm-pill-dark {
+    background: linear-gradient(#2b2b2b, #1f1f1f 50%, #2b2b2b);
+    color: #fff;
+    box-shadow: var(--shadow-pill);
+  }
+  .tm-pill-grey {
+    background: var(--color-chip);
+    color: var(--color-ink);
+    border-color: transparent;
+  }
+  .tm-pill-ghost {
+    background: #fff;
+    color: var(--color-ink);
+    border-color: var(--color-hair);
+    font-family: var(--font-ui);
+  }
+  .tm-tag {
+    display: inline-flex;
+    align-items: center;
+    background: var(--color-pink-soft);
+    color: var(--color-pink-ink);
+    border: 1px solid var(--color-pink);
+    border-radius: var(--radius-pill);
+    padding: 3px 12px;
+    font-size: 12.5px;
+    white-space: nowrap;
+  }
+  .tm-row {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--color-chip);
+    border-radius: var(--radius-pill);
+    padding: 11px 16px;
+    font-size: 13.5px;
+    color: var(--color-ink);
+    text-align: left;
+    transition: background 0.2s var(--ease-fj);
+  }
+  .tm-row-selected {
+    background:
+      radial-gradient(120% 140% at 20% 120%, #3b1033 0, transparent 50%),
+      radial-gradient(90% 120% at 90% -20%, #13301f 0, transparent 55%),
+      #111;
+    color: #fff;
+    box-shadow: var(--shadow-pill);
+  }
+  .tm-num {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    flex: none;
+    border-radius: 999px;
+    background: #111;
+    color: #fff;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tm-field {
+    width: 100%;
+    background: var(--color-chip);
+    border-radius: var(--radius-pill);
+    padding: 12px 16px;
+    font-size: 13.5px;
+    color: var(--color-ink);
+    outline: none;
+  }
+  .tm-field::placeholder {
+    color: var(--color-mute);
+  }
+  .tm-field:focus {
+    box-shadow: 0 0 0 2px var(--color-pink-soft);
+  }
+  .tm-card {
+    background: var(--color-card);
+    border: 1px solid var(--color-hair);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .tm-live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--color-live);
+    box-shadow: 0 0 0 4px #ff004d26;
+    animation: tm-pulse 1.6s infinite;
+  }
+  .tm-rise {
+    animation: tm-rise 0.62s var(--ease-fj) both;
+  }
+}
+
+@keyframes tm-pulse {
+  50% {
+    box-shadow: 0 0 0 7px #ff004d10;
+  }
+}
+
+@keyframes tm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Excalidraw: blend into the paper and hide chrome we don't use in view mode. */
+.tm-canvas .excalidraw {
+  --color-primary: var(--color-pink);
+}
+.tm-canvas .excalidraw .App-bottom-bar,
+.tm-canvas .excalidraw .layer-ui__wrapper__footer-right {
+  display: none;
 }
