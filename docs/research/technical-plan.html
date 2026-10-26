@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Technical Plan: Live Speech → Diagram + Transcript + Notes</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: var(--font-sans, -apple-system, system-ui, sans-serif); color: var(--foreground, #1b1b1f); line-height: 1.55; margin: 0; }
+  .wrap { max-width: 960px; margin: 0 auto; padding-bottom: 48px; }
+  nav { position: sticky; top: 0; background: var(--background, #fff); padding: 8px 0; border-bottom: 1px solid var(--border, #e5e5e5); font-size: 12px; z-index: 5; }
+  nav a { margin-right: 12px; color: var(--muted-foreground, #555); text-decoration: none; }
+  h1 { font-size: 22px; margin: 16px 0 4px; }
+  h2 { font-size: 17px; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border, #ddd); }
+  h3 { font-size: 14px; margin: 18px 0 6px; }
+  p, li { font-size: 14px; }
+  .muted { color: var(--muted-foreground, #666); font-size: 13px; }
+  .callout { border-left: 4px solid var(--chart-1, #4f46e5); background: var(--card, #fafafa); border-radius: var(--radius, 8px); padding: 12px 16px; margin: 12px 0; }
+  .warn { border-left-color: var(--warning, #d97706); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border, #e5e5e5); vertical-align: top; }
+  th { font-weight: 600; color: var(--muted-foreground, #555); font-size: 11px; text-transform: uppercase; letter-spacing: .03em; }
+  tr.pick td { background: color-mix(in srgb, var(--success, #16a34a) 9%, transparent); }
+  code, pre { font-family: var(--font-mono, ui-monospace, monospace); font-size: 12px; }
+  code { background: var(--code-background, #f2f2f2); padding: 1px 5px; border-radius: 4px; }
+  pre { background: var(--code-background, #f4f4f5); color: var(--code-foreground, inherit); padding: 12px 14px; border-radius: var(--radius, 8px); overflow-x: auto; line-height: 1.45; }
+  .app { display: grid; grid-template-columns: 1fr 250px; gap: 0; border: 1px solid var(--border, #ddd); border-radius: var(--radius, 8px); overflow: hidden; font-size: 12px; }
+  .bar { grid-column: 1 / -1; display: flex; gap: 10px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--border, #ddd); background: var(--card, #f7f7f8); }
+  .rec { color: var(--destructive, #dc2626); font-weight: 700; }
+  .canvas { padding: 14px; min-height: 340px; background-image: radial-gradient(var(--border, #ddd) 1px, transparent 1px); background-size: 16px 16px; }
+  .panel { border-left: 1px solid var(--border, #ddd); display: grid; grid-template-rows: auto 1fr auto 1fr; background: var(--card, #fafafa); }
+  .ph { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted-foreground, #666); padding: 7px 10px; border-bottom: 1px solid var(--border, #ddd); }
+  .log { padding: 6px 10px; }
+  .log p { font-size: 11.5px; margin: 0 0 5px; }
+  .h { color: var(--chart-1, #4f46e5); font-weight: 700; } .g { color: var(--chart-2, #16a34a); font-weight: 700; }
+  .interim { opacity: .5; font-style: italic; }
+  .sec { font-weight: 700; font-size: 12px; margin: 0 0 6px; }
+  .pyr { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-bottom: 14px; }
+  .pyr div { border: 1.5px solid var(--foreground, #333); border-radius: 3px; text-align: center; padding: 3px 4px; font-size: 11px; }
+  .quad { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; max-width: 300px; }
+  .quad div { border: 1.5px solid var(--foreground, #333); border-radius: 4px; padding: 6px; min-height: 34px; font-size: 11px; }
+  .quad .empty { border-style: dashed; opacity: .45; }
+  .flow { display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; align-items: center; margin: 8px 0; }
+  .flow .b { border: 1px solid var(--border, #ccc); background: var(--card, #f6f6f6); border-radius: 6px; padding: 5px 9px; }
+  a { color: var(--accent, #4f46e5); }
+  @media (max-width: 680px) { .app { grid-template-columns: 1fr; } .panel { border-left: 0; border-top: 1px solid var(--border, #ddd); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><a href="#ui">Screen</a><a href="#pipe">Pipeline</a><a href="#stt">Speech-to-text</a><a href="#llm">LLM</a><a href="#diagram">Diagram engine</a><a href="#ops">Ops schema</a><a href="#stack">Stack</a><a href="#edge">Edge cases</a><a href="#eval">Testing</a><a href="#build">Build order</a><a href="#decide">Decisions</a></nav>
+
+<h1>Technical plan: live speech → diagram, transcript, and notes</h1>
+<div class="muted">26 Oct 2026 · companion to <code>product-plan.html</code> and <code>30-day-build-in-public-plan.html</code></div>
+
+<div class="callout">
+<b>Goal.</b> As people talk, the <b>canvas draws what they describe</b>. They say <i>“think of it as a pyramid”</i> → a pyramid appears. <i>“There are four methods”</i> → a 2×2 box with 4 empty slots appears and fills as each method is explained. On the right, the <b>live transcript</b> and the <b>running notes</b> both scroll as a log.
+</div>
+
+<h2 id="ui">1. The screen</h2>
+<div class="app">
+  <div class="bar"><span class="rec">● REC 12:40</span><span>Spoken: Tamil + English</span><span>Map: English</span><span style="margin-left:auto" class="muted">cost so far ₹6</span></div>
+  <div class="canvas">
+    <div class="sec">① Growth framework: “think of it as a pyramid”</div>
+    <div class="pyr">
+      <div style="width:90px">Brand</div>
+      <div style="width:150px">Retention</div>
+      <div style="width:210px">Product–market fit</div>
+    </div>
+    <div class="sec">② “There are 4 methods to get users”</div>
+    <div class="quad">
+      <div><b>1. Cold DMs</b><br>50/day, personal</div>
+      <div><b>2. Content</b><br>short videos daily</div>
+      <div><b>3. Partnerships</b><br><span class="interim">listening…</span></div>
+      <div class="empty">4. —</div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="ph">Live transcript</div>
+    <div class="log">
+      <p><span class="h">Host 11:58</span> So how do you actually get users?</p>
+      <p><span class="g">Guest 12:02</span> Naan solren, there are 4 methods. First, cold DMs, 50 per day…</p>
+      <p><span class="g">Guest 12:21</span> Second is content, daily short videos…</p>
+      <p class="interim"><span class="g">Guest</span> third is partnerships, like…</p>
+    </div>
+    <div class="ph">Notes</div>
+    <div class="log">
+      <p>• Growth = pyramid: PMF → retention → brand</p>
+      <p>• 4 user-acquisition methods (2 of 4 explained)</p>
+      <p>• Cold DMs: 50/day, must be personal</p>
+      <p>❓ Follow up: which method worked best?</p>
+    </div>
+  </div>
+</div>
+<p class="muted">Layout: canvas ~70% left, right panel ~30% with two stacked, auto-scrolling logs. Clicking a note or diagram box highlights the exact transcript lines it came from (traceability).</p>
+
+<h2 id="pipe">2. Pipeline (what runs, in order)</h2>
+<div class="flow">
+  <span class="b">🎙 Mic (browser AudioWorklet, 16 kHz PCM)</span>→
+  <span class="b">STT WebSocket<br><span class="muted">direct from browser via short-lived token</span></span>→
+  <span class="b">Partial text → transcript log (grey)<br>Final segment → transcript log (solid)</span>→
+  <span class="b">Scheduler<br><span class="muted">batch finals, ~2s debounce</span></span>→
+  <span class="b">LLM “brain”<br><span class="muted">returns notes + diagram ops (JSON)</span></span>→
+  <span class="b">Board reducer + templates</span>→
+  <span class="b">Excalidraw canvas</span>
+</div>
+<table>
+  <tr><th>Stage</th><th>Latency budget</th><th>Notes</th></tr>
+  <tr><td>Speech → final segment</td><td>0.3–1s after speaker pauses</td><td>Partials appear in ~150–300ms, so the transcript feels instant</td></tr>
+  <tr><td>Debounce</td><td>~1.5–2s</td><td>Wait for 1–2 finals so the LLM sees complete thoughts, not half sentences</td></tr>
+  <tr><td>LLM call</td><td>0.5–2s</td><td>Small prompt: last ~2 min of transcript + compact board state</td></tr>
+  <tr><td>Render</td><td>&lt;50ms</td><td>Deterministic templates, no AI in the layout</td></tr>
+  <tr><td><b>Total: words → diagram</b></td><td><b>~2–4s</b></td><td>Feels live. A “listening…” ghost slot shows something is coming</td></tr>
+</table>
+
+<h2 id="stt">3. Speech-to-text: which one?</h2>
+<table>
+  <tr><th>Engine</th><th>Real-time price</th><th>Tamil / Hindi + English mixed</th><th>Verdict</th></tr>
+  <tr class="pick"><td><b>Soniox</b></td><td><b>~$0.12/hr</b></td><td>Claims mid-sentence code-switching for Tamil & Hindi, 60+ languages, real-time translation ($0.18/hr)</td><td><b>Primary pick.</b> Cheapest, multilingual, has translation for “map language”. Accuracy claims are vendor-only, so test first</td></tr>
+  <tr class="pick"><td><b>Sarvam Saaras v3 / v4</b></td><td>₹30/hr (~$0.34)</td><td>Built for 22 Indian languages, Hinglish/Tanglish code-mixing. V4 released Sept 2026</td><td><b>Challenger for Indian languages.</b> If it beats Soniox on Tanglish, route Indic sessions here</td></tr>
+  <tr><td>AssemblyAI Universal-Streaming</td><td>~$0.15/hr</td><td>Strong English. Indic support limited</td><td>Good cheap English fallback. Bills connection time, including idle</td></tr>
+  <tr><td>Deepgram Nova-3</td><td>~$0.29–0.35/hr</td><td>Hindi code-switching yes. Tamil monolingual only</td><td>Solid English. Not the Tamil answer</td></tr>
+  <tr><td>ElevenLabs Scribe v2 Realtime</td><td>~$0.39/hr</td><td>90+ languages, ~150ms latency</td><td>Good quality, pricier</td></tr>
+  <tr><td>Google Chirp 3</td><td>~$0.96/hr (reseller-listed $0.016/min)</td><td>Tamil not confirmed in sources</td><td>Too expensive for this use</td></tr>
+  <tr><td>Browser Web Speech API</td><td>Free</td><td>Inconsistent across browsers, no diarization</td><td>Only for a zero-cost hack demo</td></tr>
+</table>
+<div class="callout"><b>Plan:</b> build one <code>SttProvider</code> interface. Implement <b>Soniox first</b>, then <b>Sarvam</b>. In Week 1, run a bake-off on 10 of your own clips (English, Tanglish, Hinglish) and compare accuracy on names/numbers, latency, and speaker labels. Pick the default per language from real results, not marketing. All prices above are from 2026 web sources (mostly vendor or reseller pages), so confirm on each pricing page when you sign up.</div>
+<pre>interface SttProvider {
+  start(opts: { languages: string[]; diarize: boolean; keyterms?: string[] }): Promise&lt;void&gt;;
+  pushAudio(pcm16k: Int16Array): void;
+  onPartial(cb: (s: Segment) =&gt; void): void;   // grey, replaceable
+  onFinal(cb: (s: Segment) =&gt; void): void;     // solid, sent to LLM
+  stop(): Promise&lt;void&gt;;
+}
+type Segment = { id: string; speaker: string; text: string; lang?: string; startMs: number; endMs: number };</pre>
+
+<h2 id="llm">4. LLM: a small, fast model is enough</h2>
+<p>The LLM's job is narrow: read the latest transcript, return <b>notes</b> and <b>diagram ops</b> as JSON. It never draws or positions anything. That makes cheap models viable.</p>
+<table>
+  <tr><th>Option</th><th>Price (per 1M tokens in / out)</th><th>Use</th></tr>
+  <tr><td><b>Your OpenCode key</b> (Zen pay-as-you-go / Go $10/mo)</td><td>Zen lists e.g. GPT-5.6 Luna $0.20 / $1.20, plus some free models (DeepSeek V4 Flash Free)</td><td><b>Use for development now.</b> Check OpenCode's terms before using it to power a public product. It's positioned for coding agents</td></tr>
+  <tr><td>Gemini 2.5 Flash-Lite / Flash</td><td>~$0.10 / $0.40 (Flash-Lite)</td><td>Strong production candidate: cheap, fast, good with Indian languages</td></tr>
+  <tr><td>GPT-5.6 Luna / GPT-5 mini</td><td>~$0.20–0.25 / $1.20–2.00</td><td>Reliable structured JSON</td></tr>
+  <tr><td>Groq (open models, e.g. GPT-OSS 20B)</td><td>Low. ~1000 tokens/s, sub-100ms first token</td><td>If latency becomes the bottleneck</td></tr>
+  <tr><td>Claude Haiku 5.5 / Sonnet 5.5</td><td>Higher</td><td>End-of-session summary pack, where quality matters more than speed</td></tr>
+</table>
+<p><b>Cost per hour (live lane):</b> about one call every 10s ≈ 360 calls/hr × ~3k input + ~300 output tokens ≈ 1.1M in / 0.1M out → <b>~$0.15/hr</b> on Flash-Lite pricing, <b>~$0.35/hr</b> on Luna pricing. Prompt caching of the fixed system prompt lowers it further.</p>
+<p><b>Implementation:</b> use the Vercel AI SDK (or any OpenAI-compatible client) so the model is just a config line. OpenCode Zen, Gemini, OpenAI, and Groq all plug in. Validate every response with a <code>zod</code> schema. Invalid JSON gets one retry, then is skipped (never crash the board).</p>
+<p class="muted">Tell me which API keys you have and I'll set the default. The plan works with any of them.</p>
+
+<h2 id="diagram">5. Diagram engine: how “pyramid” becomes a pyramid</h2>
+<div class="callout"><b>Key idea: a template library.</b> The LLM detects the <i>visual intent</i> in speech and picks a template. Code draws the template. The AI never invents coordinates, so diagrams always look clean and never jump around.</div>
+<h3>Visual intents the LLM detects</h3>
+<table>
+  <tr><th>Template</th><th>Explicit cue</th><th>Implicit cue</th><th>Drawn as</th></tr>
+  <tr><td><b>Pyramid</b></td><td>“pyramid”, “foundation… top”, “layers”</td><td>Ranked levels building on each other</td><td>Stacked boxes, widest at bottom (or a triangle with divider lines)</td></tr>
+  <tr><td><b>Quadrant / 2×2</b></td><td>“four boxes”, “2 by 2”, “four corners”</td><td>Two axes (“high effort vs low impact”)</td><td>4 rectangles in a grid, optional axis labels</td></tr>
+  <tr><td><b>N methods / list</b></td><td>“there are 4 methods / 3 ways”</td><td>“first… second… third”</td><td>N cards with numbered empty slots that fill in as they're explained</td></tr>
+  <tr><td><b>Steps / process</b></td><td>“step 1, then, after that”</td><td>Sequential actions</td><td>Boxes left → right with arrows</td></tr>
+  <tr><td><b>Funnel</b></td><td>“funnel”, “top of funnel”</td><td>Narrowing stages</td><td>Shrinking boxes top → bottom</td></tr>
+  <tr><td><b>Cycle / loop</b></td><td>“cycle”, “flywheel”, “it repeats”</td><td>A → B → C → A</td><td>Nodes in a circle with arrows</td></tr>
+  <tr><td><b>Comparison</b></td><td>“X vs Y”, “difference between”</td><td>Pros and cons</td><td>Two columns side by side</td></tr>
+  <tr><td><b>Timeline</b></td><td>“in 2019… then in 2021”</td><td>Dates, life story</td><td>Horizontal line with dated points</td></tr>
+  <tr><td><b>Mind map</b> (default)</td><td>—</td><td>Topic with sub-points</td><td>Central node with branches (tree layout)</td></tr>
+</table>
+<h3>How it renders</h3>
+<ol>
+  <li><b>Sections.</b> Each topic or question becomes a section (titled frame) stacked down the canvas. The current section is highlighted.</li>
+  <li><b>Progressive fill.</b> “There are 4 methods” immediately creates 4 dashed empty slots. Each slot turns solid when that method is explained. This feels magical on video.</li>
+  <li><b>Template = pure function:</b> <code>(visual model) → Excalidraw element skeletons</code> with fixed positions. Uses Excalidraw's <code>convertToExcalidrawElements</code> (rectangles, ellipses, text labels, bound arrows) and <code>updateScene</code>.</li>
+  <li><b>Stable IDs.</b> Element IDs derive from <code>visualId + slotIndex</code>, so updates modify elements in place, with no flicker.</li>
+  <li><b>Re-shape on correction.</b> “Actually five methods, not four” → <code>resize_visual</code>. “It's more like a cycle” → <code>convert_visual</code> keeps the labels and redraws the shape.</li>
+  <li><b>Camera.</b> Auto-follows the active section with smooth scroll. If the user pans manually, auto-follow pauses until they press “Follow live”.</li>
+  <li><b>Fonts.</b> Hand-drawn font for Latin text. Test Tamil/Devanagari early: if Excalidraw's hand-drawn font lacks those glyphs, set a Noto Sans fallback for non-Latin labels.</li>
+</ol>
+
+<h2 id="ops">6. The LLM contract (ops schema)</h2>
+<pre>// Input to the LLM each tick
+{
+  "recent_transcript": [ { "id": "s41", "speaker": "guest", "text": "..." } ],   // last ~2 min
+  "board": [ { "id": "v2", "template": "quadrant", "title": "4 methods to get users",
+               "slots": ["Cold DMs", "Content", null, null] } ],                  // compact state
+  "map_language": "en"
+}
+
+// Output (validated with zod)
+{
+  "notes": [ { "type": "point" | "question" | "action" | "quote",
+               "text": "Cold DMs: 50/day, must be personal", "source": ["s41"] } ],
+  "ops": [
+    { "op": "create_visual",  "id": "v3", "template": "pyramid", "title": "Growth framework", "slots": 3 },
+    { "op": "fill_slot",      "visual": "v2", "index": 2, "label": "Partnerships", "detail": "co-host lives", "source": ["s44"] },
+    { "op": "resize_visual",  "visual": "v2", "slots": 5 },
+    { "op": "convert_visual", "visual": "v1", "template": "cycle" },
+    { "op": "link",           "from": "v1", "to": "v3", "label": "leads to" },
+    { "op": "set_active",     "visual": "v3" }
+  ]
+}</pre>
+<p><b>Prompt rules (core):</b> only draw what was actually said · prefer filling existing visuals over creating new ones · create a visual only on a clear structure cue · labels ≤ 5 words in the map language · every op cites its source segment IDs · return empty <code>ops</code> when nothing new happened (most ticks).</p>
+
+<h2 id="stack">7. Stack</h2>
+<table>
+  <tr><th>Layer</th><th>Choice</th><th>Why</th></tr>
+  <tr><td>App</td><td>Next.js + TypeScript</td><td>One codebase for UI and API routes, easy deploy</td></tr>
+  <tr><td>Canvas</td><td><code>@excalidraw/excalidraw</code> React component</td><td>Free, hand-drawn look, editable, exports PNG/SVG/.excalidraw. MCP is only for prototyping in Claude, not runtime</td></tr>
+  <tr><td>State</td><td>Zustand store: transcript, notes, board model</td><td>Board reducer is a pure function, easy to test and replay</td></tr>
+  <tr><td>STT</td><td>Soniox + Sarvam adapters. Browser connects directly with a short-lived token from our API</td><td>Low latency, API keys never reach the browser, no audio relay server needed</td></tr>
+  <tr><td>LLM</td><td>Vercel AI SDK + zod, called from a Next.js route</td><td>Swap models by config, keys stay server-side</td></tr>
+  <tr><td>Data (Week 3)</td><td>Supabase or Neon Postgres + auth</td><td>Save sessions, usage limits, billing</td></tr>
+  <tr><td>Hosting</td><td>Vercel (or Cloudflare)</td><td>Verify locally first. Keep preview deploys low (they cost money)</td></tr>
+</table>
+<pre>src/
+  app/                 // pages + API routes (/api/stt-token, /api/brain)
+  lib/stt/             // SttProvider interface, soniox.ts, sarvam.ts
+  lib/brain/           // prompt, zod schemas, context builder, scheduler
+  lib/board/           // board model + reducer (applies ops)
+  lib/board/templates/ // pyramid.ts, quadrant.ts, steps.ts, cycle.ts, ... → excalidraw skeletons
+  components/          // Canvas, TranscriptLog, NotesLog, TopBar
+  eval/                // replay harness + golden clips</pre>
+
+<h2 id="edge">8. Edge cases</h2>
+<table>
+  <tr><th>Case</th><th>Handling</th></tr>
+  <tr><td>Speaker says “4 methods” but explains 3</td><td>Leftover slot stays dashed. Shows up as a follow-up in notes (“4th method not covered”)</td></tr>
+  <tr><td>Speaker corrects themselves</td><td><code>resize_visual</code> / <code>convert_visual</code> / <code>update_slot</code> ops, labels preserved</td></tr>
+  <tr><td>LLM returns invalid JSON or unknown IDs</td><td>zod validation → retry once → skip. Ops referencing unknown IDs are dropped</td></tr>
+  <tr><td>LLM call slower than tick rate</td><td>Single in-flight call. New finals queue and merge into the next call (no pile-up)</td></tr>
+  <tr><td>Hallucinated content</td><td>Every op must cite source segments. Uncited ops are dropped</td></tr>
+  <tr><td>Silence or music</td><td>No finals → no LLM calls. STT auto-pauses after N seconds of silence (cost)</td></tr>
+  <tr><td>Network drop</td><td>Buffer audio locally, reconnect STT with backoff, mark a gap in the transcript</td></tr>
+  <tr><td>Long sessions (2h+)</td><td>Older sections collapse to their titles. LLM context stays at ~2 min + compact board</td></tr>
+  <tr><td>Mixed scripts</td><td>Transcript shows the original. Map labels follow the chosen map language</td></tr>
+  <tr><td>Mic permission denied / no mic</td><td>Clear error + “upload a recording” fallback (also used for demos)</td></tr>
+</table>
+
+<h2 id="eval">9. Testing: replay mode is your secret weapon</h2>
+<ul>
+  <li><b>Replay mode:</b> feed a recorded audio file through the <i>exact</i> live pipeline at real speed. Same code path, so it's both your test harness and your demo-video generator.</li>
+  <li><b>Golden clips (10 to start):</b> 2-minute clips containing a pyramid, 4 methods, steps, a comparison, and a correction. Each in English, Tanglish, and Hinglish.</li>
+  <li><b>Scores per clip:</b> right template chosen? slots filled correctly? words→diagram latency? cost? Track in a simple table to compare STT and LLM options.</li>
+  <li><b>Unit tests:</b> board reducer (ops → state) and each template (state → elements). Pure functions, fast tests.</li>
+</ul>
+
+<h2 id="build">10. Build order (fits Week 1–2 of the 30-day plan)</h2>
+<table>
+  <tr><th>Day</th><th>Deliverable</th><th>Done when</th></tr>
+  <tr><td>1</td><td>Next.js app, Excalidraw left + two logs right, static data</td><td>Layout matches the mock above</td></tr>
+  <tr><td>2</td><td>Board model + reducer + 3 templates (list/N-methods, pyramid, quadrant), driven by hard-coded ops</td><td>Unit tests pass. Visuals look clean</td></tr>
+  <tr><td>3</td><td>Soniox adapter: mic → partial/final transcript log</td><td>Live transcript, speaker labels</td></tr>
+  <tr><td>4</td><td>Brain: prompt + zod + scheduler → notes log + ops</td><td>Saying “there are 3 ways…” creates and fills 3 slots</td></tr>
+  <tr><td>5</td><td>Replay mode + first 5 golden clips</td><td>Same result from file as from mic</td></tr>
+  <tr><td>6</td><td>Sarvam adapter + STT bake-off. Remaining templates (steps, funnel, cycle, comparison, timeline, mind map)</td><td>Default STT chosen from real numbers</td></tr>
+  <tr><td>7–8</td><td>Corrections (resize/convert), camera follow, traceability click, fonts for Tamil/Hindi</td><td>Golden-clip score ≥ 80% template accuracy</td></tr>
+  <tr><td>9–10</td><td>Polish + cost meter + silence auto-pause</td><td>Record the first viral-format demo video</td></tr>
+</table>
+
+<h2 id="decide">11. Decisions I need from you</h2>
+<ol>
+  <li><b>Which LLM API keys do you have?</b> (OpenCode Zen/Go, Gemini, OpenAI, Groq, Anthropic, …) I'll make that the default for development.</li>
+  <li><b>Create Soniox + Sarvam accounts</b> (both have free credits) so we can run the bake-off. I'll never need the keys in chat. They go in <code>.env.local</code>.</li>
+  <li><b>Where should the repo live</b>, and is Next.js + Excalidraw fine?</li>
+  <li><b>Record 3–5 short clips</b> of yourself explaining something in Tanglish/English with a pyramid, “3 ways”, and steps. These become the first golden clips.</li>
+</ol>
+
+<h2>Sources</h2>
+<ul class="muted">
+  <li>Soniox: <a href="https://soniox.com/pricing">pricing</a> · <a href="https://soniox.com/speech-to-text/tamil">Tamil</a> · <a href="https://soniox.com/speech-to-text/hindi">Hindi</a> · <a href="https://soniox.com/speech-translation/tamil/hindi">translation</a> · <a href="https://soniox.com/compare-stt/soniox-vs-google">vs Google</a></li>
+  <li>Sarvam: <a href="https://docs.sarvam.ai/api/getting-started/pricing">pricing docs</a> · <a href="https://smallest.ai/blog/sarvam-ai-speech-to-text-pricing">₹30/hr breakdown</a> · <a href="https://www.marktechpost.com/2026/09/26/sarvam-ai-releases-saaras-v4-a-speech-to-text-model-for-all-22-indian-languages-and-global-english/amp/">Saaras V4</a> · <a href="https://mindcat.ai/blog/sarvam-saaras-v4-speech-to-text">V4 vs global STT</a></li>
+  <li>Google Chirp 3: <a href="https://openrouter.ai/google/chirp-3">OpenRouter listing</a> · <a href="https://smallest.ai/blog/is-google-cloud-speech-to-text-still-the-right-choice">Google STT in 2026</a> · <a href="https://convertaudiototext.com/blog/speech-to-text-api-pricing-2026">STT pricing 2026</a></li>
+  <li>ElevenLabs: <a href="https://elevenlabs.io/pricing/api">API pricing</a> · <a href="https://elevenlabs.io/realtime-speech-to-text">Scribe v2 Realtime</a></li>
+  <li>Deepgram / AssemblyAI: <a href="https://telenow.ai/blog/deepgram-speech-to-text-models-benchmarks-pricing-and-when-to-use-it/">Deepgram languages</a> · <a href="https://flexprice.io/pricing-index/assemblyai">AssemblyAI pricing</a></li>
+  <li>OpenCode: <a href="https://docs.opencode.ai/docs/go">Go docs</a> · <a href="https://www.codeagentswarm.com/en/guides/opencode-plans-and-pricing">plans & Zen pricing</a> · <a href="https://www.bitdoze.com/opencode-go-plan/">Go models</a></li>
+  <li>LLM pricing/latency: <a href="https://www.kunalganglani.com/blog/llm-api-latency-benchmarks-2026">latency benchmarks 2026</a> · <a href="https://aireiter.com/blog/cheapest-llm-api">cheapest LLM APIs</a> · <a href="https://tokenwisehq.com/best-llm-for/structured-outputs">structured outputs</a></li>
+</ul>
+<p class="muted">Prices are from 2026 web sources, many vendor or reseller pages. Confirm on each provider's live pricing page at signup.</p>
+</div>
+</body>
+</html>
