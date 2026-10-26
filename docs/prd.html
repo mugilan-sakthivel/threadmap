@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ThreadMap · Product Requirements Document</title>
+<style>
+  :root { --paper:#fdfdfc; --ink:#160216; --text:#363636; --soft:#6b6b6b; --dash:#e7e7e7; --chip:#f1f1ef; --pink:#ff4de1; --pink-ink:#570152; }
+  body { margin:0; background:var(--paper); color:var(--text); font-family:-apple-system,system-ui,sans-serif; line-height:1.6; }
+  .wrap { max-width:900px; margin:0 auto; padding:0 22px 64px; }
+  nav { position:sticky; top:0; background:var(--paper); border-bottom:1px dashed var(--dash); padding:10px 0; font-size:12.5px; z-index:2; }
+  nav a { color:var(--soft); text-decoration:none; margin-right:12px; }
+  h1 { font-family:Georgia,serif; color:var(--ink); font-size:32px; letter-spacing:-.02em; margin:26px 0 4px; }
+  h2 { font-family:Georgia,serif; color:var(--ink); font-size:21px; margin:36px 0 10px; padding-bottom:6px; border-bottom:1px dashed var(--dash); }
+  h3 { font-size:15px; margin:18px 0 6px; color:var(--ink); }
+  p, li { font-size:14.5px; }
+  .meta { color:var(--soft); font-size:13px; }
+  .tag { display:inline-block; background:#ffa1ff; color:var(--pink-ink); border:1px solid var(--pink); border-radius:60px; padding:2px 10px; font-size:12px; }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; margin:8px 0; }
+  th, td { text-align:left; padding:8px; border-bottom:1px solid #ececea; vertical-align:top; }
+  th { font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--soft); }
+  .callout { background:#fff; border-left:4px solid var(--pink); border-radius:10px; padding:12px 16px; box-shadow:0 10px 30px #0000000f; }
+  code { background:var(--chip); padding:1px 5px; border-radius:4px; font-size:12.5px; }
+  .pill { display:inline-block; font-size:11px; font-weight:600; padding:1px 8px; border-radius:60px; }
+  .p0 { background:#ffe6fb; color:var(--pink-ink); } .p1 { background:var(--chip); color:var(--ink); } .p2 { background:#fff; border:1px solid var(--dash); color:var(--soft); }
+  a { color:#a3007f; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><a href="index.html">← Docs home</a><a href="#problem">Problem</a><a href="#users">Users</a><a href="#goals">Goals</a><a href="#stories">Stories</a><a href="#reqs">Requirements</a><a href="#shapes">Shape logic</a><a href="#nfr">Non-functional</a><a href="#metrics">Metrics</a><a href="#scope">Scope</a><a href="#risks">Risks</a><a href="#milestones">Milestones</a></nav>
+
+<h1>ThreadMap: live visual notes for podcasters</h1>
+<p class="meta">Product Requirements Document · v1.0 · 26 Oct 2026 · Owner: Mugilan S · Status: <span class="tag">MVP built</span></p>
+
+<div class="callout">
+<b>One line:</b> ThreadMap listens to a podcast or interview as it happens and draws it on a canvas: every question becomes a section, and spoken structures (a layered framework, a process, a funnel, a feedback loop, a comparison) become real diagrams that fill in as the guest explains them. A live transcript and running notes (key points, quotes, follow-up questions) log on the right. When the episode ends, the host has a visual map, show notes and follow-ups without having taken a single note.
+</div>
+
+<h2 id="problem">1. Problem</h2>
+<ul>
+  <li><b>Hosts take notes while they talk.</b> To keep track of what was asked, what the guest said and what to follow up on, interview hosts scribble notes mid-conversation. That splits their attention and the notes are messy and incomplete.</li>
+  <li><b>Today's AI tools work after the fact.</b> Riverside, Castmagic and Descript generate show notes <i>after</i> recording. Otter and Granola are live but produce plain text. None turn a live conversation into a structured visual.</li>
+  <li><b>Indian creators code-switch.</b> Hosts speak Tamil/Hindi mixed with English (Tanglish/Hinglish), which English-first tools handle poorly.</li>
+  <li><b>Human graphic recorders</b> do exactly this for events, at $1,000–2,500 per day, so the value is proven but out of reach for most creators.</li>
+</ul>
+
+<h2 id="users">2. Target users</h2>
+<table>
+  <tr><th>Persona</th><th>Need</th><th>Priority</th></tr>
+  <tr><td><b>Interview podcast host</b> (solo creator, 1–2 episodes/week)</td><td>Track questions, answers and follow-ups without writing; get show notes for free</td><td><span class="pill p0">Primary</span></td></tr>
+  <tr><td><b>Video podcast / livestream host</b></td><td>An on-screen visual that makes talking heads watchable; a shareable map after the show</td><td><span class="pill p1">Secondary</span></td></tr>
+  <tr><td><b>Indian regional-language creator</b></td><td>Accurate Tamil/Hindi + English transcription; map in English or the spoken language</td><td><span class="pill p0">Wedge</span></td></tr>
+  <tr><td>Webinar / workshop organiser</td><td>Affordable live “graphic recording”</td><td><span class="pill p2">Later</span></td></tr>
+</table>
+
+<h2 id="goals">3. Goals and non-goals</h2>
+<h3>Goals (MVP)</h3>
+<ol>
+  <li>Words → diagram on screen in a few seconds (target ≤ 4 s with a hosted fast model).</li>
+  <li>Choose the right diagram from <i>meaning</i>, not keywords: a pyramid is drawn even if nobody says “pyramid”.</li>
+  <li>Readable board for a 1–2 hour episode: sections flow top to bottom, then into new columns.</li>
+  <li>Work for mixed Tamil/Hindi + English speech; draw the map in the host's chosen language.</li>
+  <li>Never interrupt the host: glanceable, calm motion, no required interaction during recording.</li>
+</ol>
+<h3>Non-goals (MVP)</h3>
+<ul>
+  <li>Recording or hosting the audio/video itself (Riverside/Zoom already do this).</li>
+  <li>Editing, clipping or publishing the episode.</li>
+  <li>Accounts, billing, teams and audience overlays (planned, see Milestones).</li>
+</ul>
+
+<h2 id="stories">4. User stories</h2>
+<table>
+  <tr><th>#</th><th>As a host, I want to…</th><th>So that…</th><th>Status</th></tr>
+  <tr><td>1</td><td>see each question I ask appear as a numbered section</td><td>I always know where we are in the interview</td><td>✅</td></tr>
+  <tr><td>2</td><td>see the guest's framework drawn as the right shape while they explain it</td><td>I don't have to sketch it myself</td><td>✅</td></tr>
+  <tr><td>3</td><td>see “there are four methods” as four empty boxes that fill in</td><td>I can tell what's still missing</td><td>✅</td></tr>
+  <tr><td>4</td><td>get follow-up questions pinned when the guest teases something</td><td>I don't forget to ask about it</td><td>✅</td></tr>
+  <tr><td>5</td><td>read a live transcript with speaker names</td><td>I can glance back at exact wording</td><td>✅</td></tr>
+  <tr><td>6</td><td>speak Tanglish/Hinglish and get an English (or Tamil/Hindi) map</td><td>the tool fits how I actually talk</td><td>✅</td></tr>
+  <tr><td>7</td><td>correct a diagram's shape with one click, and have it stay</td><td>the AI never fights me</td><td>✅</td></tr>
+  <tr><td>8</td><td>capture my remote guest's audio from the call tab</td><td>both sides are transcribed</td><td>✅</td></tr>
+  <tr><td>9</td><td>replay a past episode transcript through the app</td><td>I can make maps and demo videos from old episodes</td><td>✅</td></tr>
+  <tr><td>10</td><td>download the map as a PNG and edit it after the show</td><td>I can share it and fix anything</td><td>✅</td></tr>
+  <tr><td>11</td><td>get show notes, chapters and clip ideas after the show</td><td>post-production is done</td><td>⏳ v1</td></tr>
+</table>
+
+<h2 id="reqs">5. Functional requirements</h2>
+<table>
+  <tr><th>ID</th><th>Requirement</th><th>Priority</th></tr>
+  <tr><td>F1</td><td>Real-time speech-to-text with speaker labels and Tamil/Hindi + English code-switching (Soniox); free browser-speech fallback; scripted demo needing no keys</td><td><span class="pill p0">P0</span></td></tr>
+  <tr><td>F2</td><td>Mic-only or mic + shared call-tab audio capture</td><td><span class="pill p0">P0</span></td></tr>
+  <tr><td>F3</td><td>Batch final transcript into AI “ticks”: ~1.5 s after a pause, never more than 6 s, one request in flight</td><td><span class="pill p0">P0</span></td></tr>
+  <tr><td>F4</td><td>AI returns validated JSON: notes + drawing operations (start section, create visual, fill/update slot, resize, convert, name comparison sides). Invalid items are dropped, never crash the board</td><td><span class="pill p0">P0</span></td></tr>
+  <tr><td>F5</td><td>8 deterministic templates: pyramid, funnel, grid, steps, cycle, comparison, timeline, list. The AI never positions anything</td><td><span class="pill p0">P0</span></td></tr>
+  <tr><td>F6</td><td>Column-flow layout: sections stack top → bottom; overflow starts a new column on the right; earlier sections never move</td><td><span class="pill p0">P0</span></td></tr>
+  <tr><td>F7</td><td>Camera follows the active section; any manual pan pauses following</td><td><span class="pill p1">P1</span></td></tr>
+  <tr><td>F8</td><td>Right panel: live transcript (renameable speakers, live partial) + notes (open follow-ups pinned; points, quotes, clip ideas)</td><td><span class="pill p0">P0</span></td></tr>
+  <tr><td>F9</td><td>Host shape override that locks the shape against later AI changes</td><td><span class="pill p1">P1</span></td></tr>
+  <tr><td>F10</td><td>Transcript replay at 1× / 1.5× / 2× through the same live pipeline</td><td><span class="pill p1">P1</span></td></tr>
+  <tr><td>F11</td><td>Pause/resume, end session, editable canvas after end, PNG export</td><td><span class="pill p1">P1</span></td></tr>
+  <tr><td>F12</td><td>Any OpenAI-compatible model via config (OpenAI, Gemini, Groq, OpenRouter, OpenCode Zen)</td><td><span class="pill p0">P0</span></td></tr>
+</table>
+
+<h2 id="shapes">6. How the shape is chosen (core intelligence)</h2>
+<p>The model decides the template from the <b>relationship between items</b>, never from trigger words:</p>
+<table>
+  <tr><th>Relationship</th><th>Template</th></tr>
+  <tr><td>Each item needs the one before it (“without X nothing works”, “only once that's solid…”)</td><td>Pyramid (most basic at the bottom)</td></tr>
+  <tr><td>Order matters (a process or a dated story)</td><td>Steps / Timeline</td></tr>
+  <tr><td>Each stage has fewer people than the last</td><td>Funnel</td></tr>
+  <tr><td>The last item leads back to the first</td><td>Cycle</td></tr>
+  <tr><td>Two sides set against each other</td><td>Comparison (with named sides)</td></tr>
+  <tr><td>Independent items of the same kind</td><td>Grid</td></tr>
+  <tr><td>None of the above</td><td>List</td></tr>
+</table>
+<ul>
+  <li><b>Commit late, correct later:</b> unclear → start a list; convert once the relationship is clear (labels kept); re-check the previous section when the topic moves on; no flip-flopping.</li>
+  <li><b>Draw only substance:</b> frameworks, processes, advice, real comparisons. Banter and tangents get at most a note.</li>
+  <li><b>Explainable:</b> every diagram carries a short “why” (e.g. “three actions in a required sequence”).</li>
+</ul>
+
+<h2 id="nfr">7. Non-functional requirements</h2>
+<table>
+  <tr><th>Area</th><th>Requirement</th></tr>
+  <tr><td>Latency</td><td>Partial words &lt; 0.5 s; words → diagram ≤ 4 s with a hosted fast model</td></tr>
+  <tr><td>Cost</td><td>≈ $0.6–1.6 per recorded hour (STT ~$0.12–0.35/h + LLM ~$0.15–1/h)</td></tr>
+  <tr><td>Reliability</td><td>Speech auto-reconnects; AI retries with backoff and pauses after 5 failures; session end never hangs (5 s cap)</td></tr>
+  <tr><td>Security</td><td>Keys only on the server; browser gets 60-second speech keys; paid routes reject cross-site requests and bodies &gt; 256 KB. Auth + rate limits required before public launch</td></tr>
+  <tr><td>Internationalisation</td><td>Grapheme-aware text wrapping for Tamil/Devanagari; map language independent of spoken language</td></tr>
+  <tr><td>Quality</td><td>Typecheck, lint, unit tests and build on every PR (CI); live-model shape eval gated at 80%</td></tr>
+</table>
+
+<h2 id="metrics">8. Success metrics</h2>
+<table>
+  <tr><th>Metric</th><th>Target</th><th>How measured</th></tr>
+  <tr><td>Shape accuracy on keyword-free speech</td><td>≥ 80%</td><td><code>pnpm eval</code> (11 cases, tick-by-tick against the real model)</td></tr>
+  <tr><td>Banter drawn as diagrams</td><td>0 per episode</td><td>Replay test on real episodes</td></tr>
+  <tr><td>Words → diagram latency</td><td>p50 ≤ 4 s</td><td>Brain route latency + scheduler debounce</td></tr>
+  <tr><td>Beta hosts who reuse it on a 2nd episode</td><td>≥ 3 of 5</td><td>30-day launch plan</td></tr>
+  <tr><td>Paying founding members by day 30</td><td>≥ 25</td><td>Payments</td></tr>
+</table>
+
+<h2 id="scope">9. Release scope</h2>
+<table>
+  <tr><th>Release</th><th>Contents</th></tr>
+  <tr><td><b>MVP (this repo)</b></td><td>Setup, live screen, 3 speech sources + replay, AI notes and diagrams, column layout, shape override, PNG export, CI, eval harness, docs</td></tr>
+  <tr><td>v1</td><td>Accounts, saved sessions, billing (Dodo Payments / Razorpay), post-show pack (summary, chapters, clips), auth + rate limits</td></tr>
+  <tr><td>v2</td><td>OBS audience overlay for video podcasts, event/webinar mode, teams</td></tr>
+</table>
+
+<h2 id="risks">10. Risks and mitigations</h2>
+<table>
+  <tr><th>Risk</th><th>Mitigation</th></tr>
+  <tr><td>Wrong shape chosen</td><td>Relationship-based prompt, commit-late conversion, host override with lock, eval gate</td></tr>
+  <tr><td>Board clutter from small talk</td><td>“Substance only” rule; one visual per section; verified on a real episode replay (11 → 7 diagrams, 0 banter)</td></tr>
+  <tr><td>Latency with slow models</td><td>Model is a config line; recommend hosted fast models; free CLI models are for testing only</td></tr>
+  <tr><td>Incumbents add this feature</td><td>Speed + Indian-language wedge + diagram quality</td></tr>
+  <tr><td>Consent / recording laws</td><td>Consent reminder, audio not stored by default (v1)</td></tr>
+  <tr><td>Paid-route abuse when public</td><td>Same-origin + size guards now; auth + per-user hour caps before launch</td></tr>
+</table>
+
+<h2 id="milestones">11. Milestones</h2>
+<ol>
+  <li>✅ Research and validation: <a href="research/idea-validation.html">idea validation</a>, <a href="research/product-plan.html">product plan</a>, <a href="research/technical-plan.html">technical plan</a></li>
+  <li>✅ Mock UX: <a href="mock-ux.html">design based on flowjam.com's visual language</a></li>
+  <li>✅ MVP build + independent review fixes (see <a href="implementation.html">implementation doc</a>)</li>
+  <li>✅ Real-podcast test: <a href="real-podcast-test.html">9-minute Lex Fridman replay with a live model</a></li>
+  <li>⏳ Shape eval at ≥ 80% on a hosted model (harness ready: <code>pnpm eval</code>)</li>
+  <li>⏳ v1: accounts, billing, post-show pack. Then the <a href="research/30-day-plan.html">30-day build-in-public launch</a></li>
+</ol>
+</div>
+</body>
+</html>
