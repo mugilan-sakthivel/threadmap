@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ThreadMap · Real podcast test</title>
+<style>
+  :root { --paper:#fdfdfc; --ink:#160216; --text:#363636; --soft:#6b6b6b; --dash:#e7e7e7; --chip:#f1f1ef; --pink:#ff4de1; }
+  body { margin:0; background:var(--paper); color:var(--text); font-family:-apple-system,system-ui,sans-serif; line-height:1.6; }
+  .wrap { max-width:960px; margin:0 auto; padding:0 22px 64px; }
+  nav { padding:12px 0; border-bottom:1px dashed var(--dash); font-size:12.5px; } nav a { color:var(--soft); text-decoration:none; }
+  h1 { font-family:Georgia,serif; color:var(--ink); font-size:30px; margin:24px 0 4px; letter-spacing:-.02em; }
+  h2 { font-family:Georgia,serif; color:var(--ink); font-size:20px; margin:32px 0 10px; padding-bottom:6px; border-bottom:1px dashed var(--dash); }
+  p, li { font-size:14.5px; } .meta { color:var(--soft); font-size:13px; }
+  table { width:100%; border-collapse:collapse; font-size:13.5px; } th, td { text-align:left; padding:8px; border-bottom:1px solid #ececea; vertical-align:top; }
+  th { font-size:11px; text-transform:uppercase; color:var(--soft); }
+  img { max-width:100%; border:1px solid #ececea; border-radius:12px; }
+  .callout { background:#fff; border-left:4px solid var(--pink); border-radius:10px; padding:12px 16px; box-shadow:0 10px 30px #0000000f; }
+  .warn { border-left-color:#d97706; }
+  code { background:var(--chip); padding:1px 5px; border-radius:4px; font-size:12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><a href="index.html">← Docs home</a></nav>
+<h1>Real podcast test</h1>
+<p class="meta">26 Oct 2026 · Lex Fridman Podcast #440 with Pieter Levels, 11:40–20:30 (67 speaker turns, ~1,900 words) · Model: DeepSeek V4.1 Flash (free, via OpenCode CLI)</p>
+
+<div class="callout"><b>Method.</b> The public transcript was pasted into ThreadMap's <b>Replay a transcript</b> mode and played through the exact live pipeline at 1.5× speed: transcript log → AI ticks → validated drawing operations → canvas. Every diagram below was decided live by the model; nothing was scripted. The transcript itself is not stored in this repo; only the results are.</div>
+
+<h2>Result (run 2, after fixes)</h2>
+<img src="img/real-podcast-board.jpg" alt="Board drawn from the real episode">
+
+<h2>What the model decided, and why</h2>
+<table>
+  <tr><th>What was said (paraphrased)</th><th>Drawn as</th><th>Model's stated reason</th></tr>
+  <tr><td>Build a thing, put it online, add Stripe so people can pay</td><td>Steps: Build → Online → Stripe</td><td>“three actions in a required sequence”</td></tr>
+  <tr><td>Ground rules of the 12-startups-in-12-months challenge</td><td>List of 4 rules</td><td>“parallel ground rules”</td></tr>
+  <tr><td>How his first startup worked: read Gmail, find YouTube links, show songs</td><td>Steps</td><td>“each step feeds the next”</td></tr>
+  <tr><td>Nobody pays for browser extensions; they should extend a real product</td><td>Comparison: <b>Plugin</b> vs <b>Real product</b></td><td>“two sides set against each other”</td></tr>
+  <tr><td>What to skip when building in 30 days</td><td>List</td><td>“parallel scope decisions”</td></tr>
+  <tr><td>Finding first users on Reddit without spamming</td><td>List</td><td>“parallel distribution rules”</td></tr>
+  <tr><td>Long tangent about Flash, Steve Jobs, 90s web GIFs</td><td><b>No diagram</b> (notes only)</td><td>Banter, not substance</td></tr>
+</table>
+<p>It also logged quotes and follow-ups such as <i>“Ask what happens if a customer's login link leaks.”</i></p>
+
+<h2>Run 1 vs run 2</h2>
+<p>Run 1 exposed two problems, which were fixed before run 2 (same transcript, same model):</p>
+<table>
+  <tr><th></th><th>Run 1</th><th>Run 2</th></tr>
+  <tr><td>Diagrams</td><td>11</td><td>7</td></tr>
+  <tr><td>Banter drawn as diagrams</td><td>3 (Flash, old-web, plugin examples)</td><td>0</td></tr>
+  <tr><td>Placeholder “Option A / Option B” headers</td><td>3</td><td>0 (real sides named)</td></tr>
+  <tr><td>Sections</td><td>8</td><td>6</td></tr>
+</table>
+<img src="img/real-podcast-run1.jpg" alt="Run 1 board (before fixes)">
+
+<h2>Limits of this test</h2>
+<div class="callout warn">
+<ul>
+  <li><b>Latency was 15–35 s per decision</b> because the free model runs through a CLI that starts an agent per call. Hosted fast models answer in a few seconds; this test measures decision quality, not production speed.</li>
+  <li>Speech-to-text was not exercised (the transcript was replayed as text). Live Soniox transcription needs a key.</li>
+  <li>The 11-case keyword-free eval (<code>pnpm eval</code>) could not finish: the free models stopped responding after ~40 calls (likely free-tier throttling). It needs one hosted model key to run.</li>
+  <li>Step boxes truncated long labels (“3. Add Stripe…”) in this run; fixed afterwards (smaller text, three lines, with a regression test).</li>
+</ul>
+</div>
+</div>
+</body>
+</html>
