@@ -208,3 +208,14 @@ describe("comparison headers", () => {
     expect(texts(named)).toContain("Before Stripe");
   });
 });
+
+describe("steps labels", () => {
+  it("keeps a typical step label whole instead of cutting it off", () => {
+    const b = applyOps(EMPTY_BOARD, [
+      { op: "create_visual", id: "v1", template: "steps" },
+      { op: "fill_slot", visual: "v1", label: "Add Stripe payments", detail: "Stripe Checkout button", source: [] },
+    ]);
+    const label = renderVisual(b.visuals.v1, 0, 0).shapes.find((s) => s.id.endsWith("|s0|label"));
+    expect(label && "text" in label ? label.text.replace(/\n/g, " ") : "").toBe("1. Add Stripe payments");
+  });
+});
