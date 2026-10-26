@@ -44,6 +44,8 @@ function card(
   slot: Slot | null,
   state: SlotState,
   prefix = "",
+  /** Narrow cards (steps) use smaller text and more lines so labels aren't cut off. */
+  text: { size: number; lines: number } = { size: LABEL_SIZE, lines: 2 },
 ): Shape[] {
   const style = boxStyle(state);
   const shapes: Shape[] = [{ id: `${id}|box`, kind: "rect", x, y, w, h, rounded: true, ...style }];
@@ -52,12 +54,12 @@ function card(
     return shapes;
   }
   const inner = w - 24;
-  const label = wrapText(`${prefix}${slot.label}`, charsThatFit(inner, LABEL_SIZE), 2);
+  const label = wrapText(`${prefix}${slot.label}`, charsThatFit(inner, text.size), text.lines);
   const detail = slot.detail ? wrapText(slot.detail, charsThatFit(inner, DETAIL_SIZE), h >= 96 ? 2 : 1) : "";
-  const labelH = textH(lineCount(label), LABEL_SIZE);
+  const labelH = textH(lineCount(label), text.size);
   const detailH = detail ? textH(lineCount(detail), DETAIL_SIZE) + 4 : 0;
   const top = y + (h - labelH - detailH) / 2;
-  shapes.push({ id: `${id}|label`, kind: "text", text: label, size: LABEL_SIZE, color: COLORS.ink, font: "hand", align: "center", x: x + w / 2, y: top + labelH / 2 });
+  shapes.push({ id: `${id}|label`, kind: "text", text: label, size: text.size, color: COLORS.ink, font: "hand", align: "center", x: x + w / 2, y: top + labelH / 2 });
   if (detail) {
     shapes.push({ id: `${id}|detail`, kind: "text", text: detail, size: DETAIL_SIZE, color: COLORS.text, font: "hand", align: "center", x: x + w / 2, y: top + labelH + 4 + textH(lineCount(detail), DETAIL_SIZE) / 2 });
   }
@@ -177,7 +179,7 @@ function renderSteps(v: Visual, base: string, x: number, y: number, ctx: RenderC
   const slots = slotsOf(v);
   const perRow = 3;
   const boxW = 150;
-  const boxH = 88;
+  const boxH = 104;
   const hGap = (CONTENT_W - perRow * boxW) / (perRow - 1);
   const vGap = 40;
   const shapes: Shape[] = [];
@@ -187,7 +189,7 @@ function renderSteps(v: Visual, base: string, x: number, y: number, ctx: RenderC
   });
   slots.forEach((slot, i) => {
     const { bx, by } = pos(i);
-    shapes.push(...card(`${base}|s${i}`, bx, by, boxW, boxH, slot, slotState(slot, i, ctx), `${i + 1}. `));
+    shapes.push(...card(`${base}|s${i}`, bx, by, boxW, boxH, slot, slotState(slot, i, ctx), `${i + 1}. `, { size: 16, lines: 3 }));
     if (i > 0) {
       const prev = pos(i - 1);
       const sameRow = Math.floor(i / perRow) === Math.floor((i - 1) / perRow);
