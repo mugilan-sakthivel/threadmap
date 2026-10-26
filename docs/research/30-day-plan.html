@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>30-Day Build-in-Public + Launch Plan</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: var(--font-sans, -apple-system, system-ui, sans-serif); color: var(--foreground, #1b1b1f); line-height: 1.55; margin: 0; }
+  .wrap { max-width: 940px; margin: 0 auto; padding-bottom: 40px; }
+  nav { position: sticky; top: 0; background: var(--background, #fff); padding: 8px 0; border-bottom: 1px solid var(--border, #e5e5e5); font-size: 12px; z-index: 2; }
+  nav a { margin-right: 12px; color: var(--muted-foreground, #555); text-decoration: none; }
+  h1 { font-size: 22px; margin: 16px 0 4px; }
+  h2 { font-size: 17px; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border, #ddd); }
+  h3 { font-size: 14px; margin: 16px 0 6px; }
+  p, li { font-size: 14px; }
+  .muted { color: var(--muted-foreground, #666); font-size: 13px; }
+  .callout { border-left: 4px solid var(--chart-1, #4f46e5); background: var(--card, #fafafa); border-radius: var(--radius, 8px); padding: 12px 16px; margin: 12px 0; }
+  .warn { border-left-color: var(--warning, #d97706); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border, #e5e5e5); vertical-align: top; }
+  th { font-weight: 600; color: var(--muted-foreground, #555); font-size: 11px; text-transform: uppercase; letter-spacing: .03em; }
+  .weeks { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; }
+  .wk { background: var(--card, #fafafa); border: 1px solid var(--border, #e5e5e5); border-radius: var(--radius, 8px); padding: 12px 14px; }
+  .wk h4 { margin: 0 0 4px; font-size: 13px; } .wk .goal { font-size: 12px; color: var(--chart-1, #4f46e5); font-weight: 600; margin-bottom: 6px; }
+  .wk ul { padding-left: 16px; margin: 4px 0; } .wk li { font-size: 12px; }
+  .wk .lbl { font-size: 11px; text-transform: uppercase; color: var(--muted-foreground, #666); margin-top: 8px; }
+  .hook { font-style: italic; }
+  a { color: var(--accent, #4f46e5); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><a href="#idea">Core idea</a><a href="#month">30 days</a><a href="#days">Day by day</a><a href="#video">Viral videos</a><a href="#launch">Launch day</a><a href="#pay">Payments</a><a href="#numbers">Targets</a><a href="#risks">Risks</a></nav>
+
+<h1>30-day build-in-public plan → launch with payments</h1>
+<div class="muted">Live conversation map for podcast hosts · 25 Oct 2026</div>
+
+<h2 id="idea">1. The core idea: the product <i>is</i> the content</h2>
+<div class="callout">
+  Most SaaS demos are boring screen recordings. Yours isn't: <b>a diagram drawing itself while people talk is naturally watchable.</b>
+  So the growth engine is simple: <b>run the product on famous podcast conversations and post the split-screen</b> (podcast on the left, map building itself on the right).
+  Every video is a demo, every video borrows the podcast's attention, and you can tag the host. That's the loop.
+</div>
+<ul>
+  <li><b>The hook format:</b> “I made AI map <i>[famous episode]</i> live while they talked.”</li>
+  <li><b>The outreach loop:</b> send the host their episode's map for free → they repost it → their audience includes other podcasters → signups.</li>
+  <li><b>Your unfair angle:</b> Tamil/Hindi + English mixed. “Every AI notes tool breaks on Tanglish. Mine doesn't.” That's a story Western founders can't tell.</li>
+</ul>
+
+<h2 id="month">2. The month at a glance</h2>
+<div class="weeks">
+  <div class="wk"><h4>Week 1 · Ugly but alive</h4><div class="goal">Recorded episode → live map</div>
+    <div class="lbl">Build</div><ul><li>Name, domain, handles, waitlist page</li><li>Audio file → STT → LLM ops → Excalidraw</li><li>Q→A tree with a stable layout</li></ul>
+    <div class="lbl">Post</div><ul><li>Day 1 announcement</li><li>First ugly map clip</li><li>Famous-episode map #1</li></ul></div>
+  <div class="wk"><h4>Week 2 · Live + languages</h4><div class="goal">Live mic, open threads, Tanglish</div>
+    <div class="lbl">Build</div><ul><li>Live mic + 2-track audio</li><li>Open threads, prep list, pin hotkey</li><li>Sarvam for Tamil/Hindi mixed</li></ul>
+    <div class="lbl">Post</div><ul><li>Tanglish demo (hero video)</li><li>Maps #2–4, tag hosts</li><li>“Looking for 10 beta hosts”</li></ul></div>
+  <div class="wk"><h4>Week 3 · Real users + money</h4><div class="goal">Post-show pack, accounts, payments</div>
+    <div class="lbl">Build</div><ul><li>Summary, show notes, chapters, export</li><li>Login + usage limits</li><li>Payments + founding-member pre-sale</li></ul>
+    <div class="lbl">Post</div><ul><li>Beta host reactions (clips)</li><li>“First ₹ / $ earned” post</li><li>Launch-date announcement</li></ul></div>
+  <div class="wk"><h4>Week 4 · Polish + launch</h4><div class="goal">Public launch, paid plans live</div>
+    <div class="lbl">Build</div><ul><li>Onboarding, error handling, reconnect</li><li>Landing page with real demo</li><li>Bug bash with beta users</li></ul>
+    <div class="lbl">Post</div><ul><li>Launch video (60–90s)</li><li>Product Hunt, X, LinkedIn, Peerlist, Reddit</li><li>Open numbers recap</li></ul></div>
+</div>
+
+<h2 id="days">3. Day by day</h2>
+<table>
+  <tr><th>Day</th><th>Build</th><th>Post (same day)</th></tr>
+  <tr><td>1</td><td>Pick name, buy domain, create X/LinkedIn/IG/YouTube handles, 1-page waitlist site</td><td>“Day 1: building an AI that draws a podcast conversation live. 30 days to launch.” + sketch of the idea</td></tr>
+  <tr><td>2</td><td>Repo, Next.js app, Excalidraw canvas renders hard-coded nodes</td><td>Screenshot of the empty canvas + the plan</td></tr>
+  <tr><td>3</td><td>Upload audio file → streaming STT → transcript on screen</td><td>“Transcript is live. Now the hard part.”</td></tr>
+  <tr><td>4</td><td>LLM conversation engine → ops (add_question, add_point)</td><td>Show the raw JSON ops: dev audience loves this</td></tr>
+  <tr><td>5</td><td>Deterministic tree layout, append-only</td><td>Before/after: chaotic AI layout vs stable layout (great “lesson” post)</td></tr>
+  <tr><td>6</td><td>Run on a full famous episode, fix the worst issues</td><td><b>Video #1: famous-episode map</b> (split-screen, 30–45s)</td></tr>
+  <tr><td>7</td><td>Rest / buffer / reply to comments</td><td>Week 1 recap: what worked, what broke, waitlist count</td></tr>
+  <tr><td>8–9</td><td>Live mic input, draft → commit nodes, 2-track host/guest</td><td>Clip of you talking and the map drawing as you speak</td></tr>
+  <tr><td>10</td><td>Open threads detection</td><td>“It caught a question I forgot to ask.” Demo</td></tr>
+  <tr><td>11</td><td>Sarvam for Tamil/Hindi + English mixed, map-language setting</td><td><b>Video #2: Tanglish/Hinglish hero demo</b></td></tr>
+  <tr><td>12</td><td>Prep list auto-tick + pin hotkey</td><td>Maps #3–4 of popular Indian podcasts, tag hosts</td></tr>
+  <tr><td>13</td><td>Recruit 10 beta hosts (DMs + replies)</td><td>“Looking for 10 podcast hosts to test this free”</td></tr>
+  <tr><td>14</td><td>Buffer</td><td>Week 2 recap + numbers</td></tr>
+  <tr><td>15–16</td><td>Post-show pack: summary, show notes, chapters, quotes, PNG export</td><td>“2-hour episode → 1-page map in 20 seconds” timelapse</td></tr>
+  <tr><td>17</td><td>Auth + per-user hour limits + silence auto-pause</td><td>Cost breakdown post (“what one hour costs me”)</td></tr>
+  <tr><td>18</td><td>Payments: checkout, subscriptions, webhook → plan limits</td><td>“Founding 100” pre-sale opens</td></tr>
+  <tr><td>19–20</td><td>Beta sessions with real hosts, record reactions (with permission)</td><td><b>Video #3: host reaction</b></td></tr>
+  <tr><td>21</td><td>Buffer</td><td>Week 3 recap: first revenue (even ₹399 counts)</td></tr>
+  <tr><td>22–24</td><td>Fix beta feedback, onboarding, reconnect/backfill, error states</td><td>Short “bug of the day” posts</td></tr>
+  <tr><td>25</td><td>Landing page with real demo video, pricing, FAQ</td><td>Launch-date teaser + waitlist reminder</td></tr>
+  <tr><td>26–27</td><td>Record launch video, prepare Product Hunt page, tests, final QA</td><td>Behind-the-scenes of making the launch video</td></tr>
+  <tr><td><b>28</b></td><td><b>LAUNCH</b></td><td>See section 5</td></tr>
+  <tr><td>29–30</td><td>Fix launch bugs, onboard users personally</td><td>Launch results with real numbers. Thank everyone</td></tr>
+</table>
+
+<h2 id="video">4. Videos that can go viral</h2>
+<div class="callout warn"><b>Honest note:</b> nobody can guarantee viral. What you <i>can</i> control is posting a clearly visual, hook-first video 3× a week for 4 weeks. One of ~12 videos usually breaks out. Optimize for consistency, then double down on whatever format hits.</div>
+<table>
+  <tr><th>Format</th><th>What it looks like</th><th>Example hook (first 2 seconds)</th><th>Where</th></tr>
+  <tr><td><b>1. Famous-episode map</b> ⭐</td><td>Split-screen: podcast clip left, map drawing itself right. 30–45s</td><td class="hook">“I let AI map this podcast live while they talked.”</td><td>Reels, Shorts, X, LinkedIn</td></tr>
+  <tr><td><b>2. Tanglish/Hinglish demo</b> ⭐</td><td>You speak mixed Tamil-English; map appears in clean English</td><td class="hook">“Every AI notes app breaks when I speak Tanglish. So I built one that doesn't.”</td><td>Reels, Shorts, LinkedIn India</td></tr>
+  <tr><td>3. Notepad vs map</td><td>Messy handwritten podcast notes vs the live map, side by side</td><td class="hook">“Podcasters: stop taking notes like this.”</td><td>Reels, TikTok-style</td></tr>
+  <tr><td>4. Timelapse</td><td>2-hour episode compressed to 20s as the map grows</td><td class="hook">“2 hours of podcast in one picture.”</td><td>All</td></tr>
+  <tr><td>5. Host reaction</td><td>A real host seeing their own episode mapped</td><td class="hook">“I showed a podcaster their own episode like this…”</td><td>All</td></tr>
+  <tr><td>6. Build log</td><td>Bug, failure, cost, numbers, decisions</td><td class="hook">“Day 12: my AI kept redrawing everything. Here's the fix.”</td><td>X, LinkedIn</td></tr>
+</table>
+<h3>Production kit (simple)</h3>
+<ul>
+  <li><b>Record:</b> Screen Studio or OBS (screen) + phone for face-cam.</li>
+  <li><b>Edit:</b> CapCut: auto-captions (always on: most people watch muted), 9:16 vertical for Reels/Shorts, 16:9 for X/YouTube.</li>
+  <li><b>Rules:</b> hook in the first 2s · map must be moving within 3s · under 45s · end with “link in bio / comment MAP for access”.</li>
+  <li><b>Batch:</b> record 3 videos every Sunday, edit Monday, schedule for the week. Daily text posts are quick.</li>
+</ul>
+<h3>Using famous podcast clips safely</h3>
+<ul>
+  <li>Use short clips (under ~30–45s), always credit the show, add your own commentary/visual (transformative), and take down on request. It's a gray area: <b>best is to ask the host first</b>, which doubles as outreach.</li>
+  <li>Safest source: record your own conversations with friends/founders. Those are 100% yours.</li>
+</ul>
+
+<h2 id="launch">5. Launch day (Day 28)</h2>
+<ol>
+  <li><b>Morning:</b> email the waitlist (“we're live, founding price ends in 72 hours”).</li>
+  <li>Product Hunt launch (prepared on Day 26–27), plus X thread with launch video pinned.</li>
+  <li>LinkedIn post (strong for Indian founders and podcasters), Peerlist launch, Indie Hackers post.</li>
+  <li>Reddit: r/podcasting, r/SideProject. Share as a story/feedback request, not an ad.</li>
+  <li>DM every beta host and every host you mapped: “we're live, would mean a lot if you shared.”</li>
+  <li>Stay online all day: reply to every comment within minutes. That drives the algorithm and conversions.</li>
+</ol>
+
+<h2 id="pay">6. Payments</h2>
+<table>
+  <tr><th>Option</th><th>For</th><th>Notes</th></tr>
+  <tr><td><b>Dodo Payments</b> (recommended to check first)</td><td>Global cards + tax handled for you (merchant of record)</td><td>Built for Indian indie founders selling globally. ~4% + 40¢, extra for international and subscriptions. Claims are mostly from its own site, so verify onboarding before Day 18</td></tr>
+  <tr><td>Razorpay subscriptions</td><td>Indian customers paying ₹ via UPI/cards</td><td>Payment gateway, not merchant of record. You handle GST and compliance</td></tr>
+  <tr><td>Lemon Squeezy / Polar / Paddle</td><td>Global</td><td>~5% + 50¢. Reports of slow or rejected onboarding for Indian merchants on Lemon Squeezy</td></tr>
+</table>
+<h3>Launch offer</h3>
+<ul>
+  <li><b>“Founding 100”:</b> $9/mo or ₹399/mo <b>locked forever</b> (normal price $15 / ₹599). Creates urgency and rewards early fans.</li>
+  <li><b>No lifetime deals.</b> Every recorded hour costs you real money (STT + LLM), so lifetime plans lose money.</li>
+  <li>Free tier: 2 hours/month so people can try it on one episode.</li>
+  <li><b>Start onboarding with the payment provider on Day 1.</b> KYC/approval can take days to weeks.</li>
+</ul>
+
+<h2 id="numbers">7. Targets for the month (realistic)</h2>
+<table>
+  <tr><th>Metric</th><th>Okay</th><th>Good</th><th>Great</th></tr>
+  <tr><td>Followers gained (all platforms)</td><td>300</td><td>1,500</td><td>5,000+</td></tr>
+  <tr><td>Best video views</td><td>10k</td><td>100k</td><td>1M</td></tr>
+  <tr><td>Waitlist signups</td><td>200</td><td>1,000</td><td>3,000+</td></tr>
+  <tr><td>Beta hosts who use it on a real episode</td><td>3</td><td>8</td><td>15</td></tr>
+  <tr><td>Paying customers by Day 30</td><td>5</td><td>25</td><td>100</td></tr>
+</table>
+<p class="muted">Even “Okay” means you've validated something and have a public portfolio project. “Good” or better means keep going for month 2.</p>
+
+<h2 id="risks">8. What can go wrong</h2>
+<ul>
+  <li><b>Scope creep</b> kills 30-day plans. Overlay, teams, and events mode are <i>not</i> this month.</li>
+  <li><b>Map quality</b> is the product. If the map looks messy, the videos won't land. Spend Week 1 getting the layout calm and readable.</li>
+  <li><b>Payments approval delay:</b> apply on Day 1 and have Razorpay as backup.</li>
+  <li><b>Burnout:</b> one rest/buffer day per week is built in. Keep it.</li>
+  <li><b>Cost spikes</b> from a viral moment: hard per-user hour caps and silence auto-pause before launch.</li>
+</ul>
+
+<h2>Sources</h2>
+<ul class="muted">
+  <li><a href="https://dodopayments.com/compare/dodopayments-vs-razorpay">Dodo vs Razorpay</a> · <a href="https://dodopayments.com/blogs/cheapest-merchant-of-record">Cheapest merchant of record 2026</a> · <a href="https://dodopayments.com/blogs/top-5-alternatives-to-lemon-squeezy">Lemon Squeezy alternatives</a> (all vendor-authored)</li>
+  <li><a href="https://building.it.com/posts/teardown-of-a-launch-from-known-indie-hacker">Indie launch teardown</a> · <a href="https://www.averi.ai/blog/how-to-launch-your-product-in-2026-a-build-in-public-strategy-guide">Build-in-public launch guide 2026</a> · <a href="https://www.vibrantsnap.com/blog/build-in-public-complete-guide-founders">Build in public guide</a> · <a href="https://www.flowjam.com/blog/best-product-demo-software-for-saas-2026">Demo video tools</a></li>
+  <li>Earlier docs: <code>idea-validation.html</code>, <code>product-plan.html</code></li>
+</ul>
+</div>
+</body>
+</html>

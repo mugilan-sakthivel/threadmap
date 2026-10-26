@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Conversation Map for Podcast Hosts: Product Plan</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font-family: var(--font-sans, -apple-system, system-ui, sans-serif); color: var(--foreground, #1b1b1f); line-height: 1.55; margin: 0; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 0 40px; }
+  nav { position: sticky; top: 0; background: var(--background, #fff); padding: 8px 0; border-bottom: 1px solid var(--border, #e5e5e5); font-size: 12px; z-index: 2; }
+  nav a { margin-right: 12px; color: var(--muted-foreground, #555); text-decoration: none; }
+  h1 { font-size: 22px; margin: 16px 0 4px; }
+  h2 { font-size: 17px; margin: 30px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border, #ddd); }
+  h3 { font-size: 14px; margin: 16px 0 6px; }
+  p, li { font-size: 14px; }
+  .muted { color: var(--muted-foreground, #666); font-size: 13px; }
+  .callout { border-left: 4px solid var(--success, #16a34a); background: var(--card, #fafafa); border-radius: var(--radius, 8px); padding: 12px 16px; margin: 12px 0; }
+  .warn { border-left-color: var(--warning, #d97706); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border, #e5e5e5); vertical-align: top; }
+  th { font-weight: 600; color: var(--muted-foreground, #555); font-size: 11px; text-transform: uppercase; letter-spacing: .03em; }
+  .mock { background: var(--card, #f7f7f8); border: 1px solid var(--border, #e5e5e5); border-radius: var(--radius, 8px); padding: 16px; display: grid; grid-template-columns: 1fr 210px; gap: 14px; font-size: 12px; }
+  .q { border: 2px solid var(--chart-1, #4f46e5); border-radius: 8px; padding: 6px 10px; font-weight: 600; margin: 0 0 6px; }
+  .a { border: 1px dashed var(--border, #bbb); border-radius: 8px; padding: 4px 10px; margin: 0 0 4px 22px; position: relative; }
+  .a::before { content: "↳"; position: absolute; left: -16px; color: var(--muted-foreground, #888); }
+  .flag { color: var(--warning, #d97706); font-weight: 600; }
+  .side h4 { margin: 0 0 6px; font-size: 11px; text-transform: uppercase; color: var(--muted-foreground, #666); }
+  .side ul { margin: 0 0 12px; padding-left: 16px; } .side li { font-size: 12px; }
+  .ghost { opacity: .5; font-style: italic; }
+  .pipe { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; margin: 8px 0; }
+  .pipe span.box { background: var(--card, #f2f2f2); border: 1px solid var(--border, #ddd); border-radius: 6px; padding: 5px 9px; }
+  code { font-family: var(--font-mono, ui-monospace, monospace); font-size: 12px; background: var(--code-background, #f2f2f2); padding: 1px 5px; border-radius: 4px; }
+  .tag { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 999px; font-weight: 600; background: color-mix(in srgb, var(--chart-1, #4f46e5) 16%, transparent); color: var(--chart-1, #4f46e5); }
+  a { color: var(--accent, #4f46e5); }
+  @media (max-width: 600px) { .mock { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><a href="#why">Why</a><a href="#ux">Live view</a><a href="#lang">Languages</a><a href="#arch">Architecture</a><a href="#roadmap">Roadmap</a><a href="#edge">Edge cases</a><a href="#price">Pricing</a><a href="#validate">Validation</a><a href="#decide">Decisions</a></nav>
+
+<h1>Live conversation map for podcast hosts</h1>
+<div class="muted">Product plan · 25 Oct 2026 · working name: <b>“ThreadMap”</b> (placeholder)</div>
+
+<h2 id="why">1. Is it useful? Yes, and here's why</h2>
+<div class="callout">
+  <b>The reframe makes the idea stronger.</b> Hosts already take notes mid-interview: they jot follow-ups, track which questions they've covered, and use those notes to write the summary later. This product <b>replaces the notepad</b>. The host sees a live map of <i>what I asked → how the guest answered → what's still open</i>, and the summary writes itself from that map afterward.
+</div>
+<ul>
+  <li><b>Hosts are already looking at notes.</b> This doesn't add a new screen. It swaps a messy notepad for a glanceable map, the way a teleprompter is used.</li>
+  <li><b>None of the incumbents do this live.</b> Riverside, Castmagic, and Descript only work <i>after</i> recording. Otter is live but shows plain text, with no question→answer structure.</li>
+  <li><b>One session gives you two outputs:</b> the live map (during the show) plus the summary, show notes, chapters, and a shareable visual (after).</li>
+  <li><b>The design rule that makes it work:</b> the screen must be readable in 1 second, with big text and calm motion, and it must <b>never demand attention</b>. If the host has to read it, it has failed.</li>
+</ul>
+
+<h2 id="ux">2. What the host sees live</h2>
+<div class="mock">
+  <div>
+    <div class="q">Q1 · How did you start the company?</div>
+    <div class="a">Quit job at Infosys in 2019</div>
+    <div class="a">First product failed, pivoted to B2B</div>
+    <div class="a"><span class="flag">⚑ mentioned “the ₹40L mistake” but didn't explain</span></div>
+    <div class="q" style="margin-top:10px">Q2 · What's your hiring philosophy?</div>
+    <div class="a">Hire for curiosity over experience</div>
+    <div class="a ghost">…guest still speaking (draft)</div>
+  </div>
+  <div class="side">
+    <h4>Open threads (follow-ups)</h4>
+    <ul><li>The ₹40L mistake?</li><li>Co-founder split. Mentioned twice</li></ul>
+    <h4>Your prep list</h4>
+    <ul><li>✅ Origin story</li><li>🟡 Hiring (in progress)</li><li>⬜ Fundraising</li><li>⬜ Advice for founders</li></ul>
+    <h4>Session</h4>
+    <ul><li>32:10 elapsed · Tamil + English</li></ul>
+  </div>
+</div>
+<h3>Core features</h3>
+<table>
+  <tr><th>Feature</th><th>What it does</th><th>Phase</th></tr>
+  <tr><td><b>Question → answer tree</b></td><td>Detects each host question and attaches the guest's key points, stories, numbers, and claims as branches</td><td><span class="tag">MVP</span></td></tr>
+  <tr><td><b>Open threads</b></td><td>Flags things the guest mentioned but didn't explain, so they become follow-up candidates. This is the killer feature</td><td><span class="tag">MVP</span></td></tr>
+  <tr><td><b>Prep list tracking</b></td><td>Paste your planned questions and they tick off automatically when covered</td><td><span class="tag">MVP</span></td></tr>
+  <tr><td><b>Manual pin</b></td><td>One hotkey/tap to say “this moment matters”, which marks it for clips</td><td><span class="tag">MVP</span></td></tr>
+  <tr><td><b>Post-show pack</b></td><td>Summary, show notes, timestamped chapters, key quotes, and the map exported as PNG/Excalidraw/Markdown</td><td><span class="tag">MVP</span></td></tr>
+  <tr><td>Other map views</td><td>Mind map (topics) or timeline as alternatives to the Q→A tree</td><td>v1</td></tr>
+  <tr><td>Clip suggestions</td><td>Timestamps of the best moments, based on pins and quotes</td><td>v1</td></tr>
+  <tr><td>Audience overlay</td><td>A clean version of the map as an OBS browser source for video podcasts</td><td>v2</td></tr>
+  <tr><td>Event / webinar mode</td><td>Multi-speaker sessions, shareable live link for attendees</td><td>v2</td></tr>
+</table>
+
+<h2 id="lang">3. Multi-language: your real wedge</h2>
+<div class="callout">
+  Western tools are built English-first. Indian podcasters constantly <b>code-switch</b> (Hinglish, Tanglish), and that's where Riverside and Castmagic are weak. India is cited as the #3 podcast market, with Hindi plus regional shows growing fastest. Start with <b>English + Hinglish + Tanglish</b> and you have a niche the big players aren't serving.
+</div>
+<h3>Three language settings (separate on purpose)</h3>
+<table>
+  <tr><th>Setting</th><th>Example</th><th>Why separate</th></tr>
+  <tr><td><b>Spoken language(s)</b></td><td>Tamil + English, mixed in one sentence</td><td>Picks the speech-to-text engine</td></tr>
+  <tr><td><b>Map language</b></td><td>Guest speaks Tamil, host wants map labels in English</td><td>Labels get translated live, which is a feature no one has</td></tr>
+  <tr><td><b>Output language</b></td><td>Show notes in English + Tamil for two audiences</td><td>Reach two audiences from one episode</td></tr>
+</table>
+<h3>Speech-to-text engine choice (behind one adapter)</h3>
+<table>
+  <tr><th>Engine</th><th>Use for</th><th>Notes</th></tr>
+  <tr><td><b>Sarvam (Saaras)</b></td><td>Hindi, Tamil, Telugu, and other Indian languages, including Hinglish/Tanglish code-mixing</td><td>22 Indian languages, streaming, diarization. Its accuracy claims are its own, so test on real audio</td></tr>
+  <tr><td><b>Deepgram Nova-3 Multilingual</b></td><td>EN, ES, FR, DE, HI, RU, PT, JA, IT, NL with code-switching</td><td>Tamil is monolingual only, with no code-switching</td></tr>
+  <tr><td><b>AssemblyAI Universal-Streaming</b></td><td>Cheapest English and major-language option</td><td>~$0.15/hr. Bills for connection time, including idle</td></tr>
+</table>
+<p class="muted">Rule: the language model (LLM) always reads the <i>original</i> transcript and writes labels in the chosen map language. Don't translate the transcript first, because you lose nuance and add latency. Romanized vs native script (தமிழ் vs “Tamil in English letters”) is a per-user toggle.</p>
+
+<h2 id="arch">4. Architecture</h2>
+<div class="pipe">
+  <span class="box">🎙 Host mic + guest audio<br><span class="muted">(2 tracks ideal)</span></span> →
+  <span class="box">STT adapter<br><span class="muted">Sarvam / Deepgram / AssemblyAI</span></span> →
+  <span class="box">Transcript buffer<br><span class="muted">speaker-tagged</span></span> →
+  <span class="box">Conversation engine<br><span class="muted">fast LLM → semantic ops</span></span> →
+  <span class="box">Graph state<br><span class="muted">questions, points, threads</span></span> →
+  <span class="box">Layout engine<br><span class="muted">deterministic, incremental</span></span> →
+  <span class="box">Excalidraw canvas</span>
+</div>
+<h3>Key design decisions</h3>
+<ol>
+  <li><b>The LLM outputs meaning, never coordinates.</b> It returns ops like <code>add_question</code>, <code>add_point(q_id)</code>, <code>open_thread</code>, <code>close_thread</code>, <code>tick_prep(item)</code>. A deterministic layout (tree via dagre/ELK) places things. That keeps the canvas from jumping around when the LLM rephrases.</li>
+  <li><b>Append-only, stable layout.</b> Existing nodes never move, and new ones attach below. Old questions collapse after about 20 min so a 2-hour show stays readable.</li>
+  <li><b>Draft → commit.</b> While the guest talks, show a faded “draft” node. Commit it when the speaker pauses (end-of-utterance from STT). That gives a responsive feel without flicker.</li>
+  <li><b>Host vs guest identification:</b> best is 2 separate audio tracks (host mic plus system/guest audio). Fallback is diarization plus a “say hi, host” calibration in the first 10 seconds.</li>
+  <li><b>Two LLM tiers:</b> a fast, cheap model for live ops (every utterance, under 1–2s) and a strong model once at the end for the summary pack, reading the full transcript plus graph.</li>
+  <li><b>MCP is for dev, not runtime.</b> Use the Excalidraw MCP to prototype layouts inside Claude. The product uses the <code>@excalidraw/excalidraw</code> React component directly.</li>
+</ol>
+<h3>Suggested stack</h3>
+<p>Next.js + TypeScript web app (desktop-first, works on a laptop next to the mic) · WebSocket relay server (Node) holding provider keys · Postgres for sessions/graphs · object storage for audio (optional, opt-in) · Excalidraw React component · audio via browser <code>getUserMedia</code>. Riverside/Zoom users route guest audio through a virtual device (BlackHole/VB-Cable) or use tab-audio capture.</p>
+
+<h2 id="roadmap">5. Roadmap</h2>
+<table>
+  <tr><th>Phase</th><th>Scope</th><th>Time</th><th>Exit test</th></tr>
+  <tr><td><b>0 · Spike</b></td><td>Play a recorded podcast file → live Q→A map on screen. English + Hinglish. No auth</td><td>~1 week</td><td>A map of a real 30-min episode that you'd actually use</td></tr>
+  <tr><td><b>1 · MVP</b></td><td>Live mic, 2-track input, open threads, prep list, pin hotkey, post-show pack, exports. EN + HI + TA (code-mixed)</td><td>~3 weeks</td><td>5 hosts use it on a real recording and 3 want it again</td></tr>
+  <tr><td><b>2 · v1</b></td><td>Accounts + billing, map-language translation, more Indian languages, chapters/clip timestamps, Notion/Google Docs export</td><td>~4 weeks</td><td>First 20 paying users</td></tr>
+  <tr><td><b>3 · v2</b></td><td>OBS audience overlay, event/webinar mode, team workspace, mobile companion view</td><td>later</td><td>Event organizer pays per event</td></tr>
+</table>
+
+<h2 id="edge">6. Edge cases to design for up front</h2>
+<table>
+  <tr><th>Case</th><th>Handling</th></tr>
+  <tr><td>Crosstalk / interruptions</td><td>2-track audio. Overlapping speech goes to the current open question, not a new node</td></tr>
+  <tr><td>Guest answers a different question than asked</td><td>LLM can attach points to an earlier question or open a “tangent” node</td></tr>
+  <tr><td>Host monologues or asks a statement-question</td><td>Classifier: question vs comment. Comments don't create Q nodes</td></tr>
+  <tr><td>STT mistakes, especially names and brand terms</td><td>Per-episode keyword list (guest name, company) sent as STT key terms. Click any node to edit</td></tr>
+  <tr><td>Network drop mid-show</td><td>Record audio locally in the browser, reconnect, and backfill the missed segment. Never lose the session</td></tr>
+  <tr><td>2–3 hour episodes</td><td>Auto-collapse old sections. Cap LLM context to recent transcript plus a compact graph summary</td></tr>
+  <tr><td>Cost runaway (left running)</td><td>Silence detection auto-pauses STT. Hard per-session cap</td></tr>
+  <tr><td>Privacy / consent</td><td>Consent reminder prompt, audio storage off by default, delete-session button</td></tr>
+  <tr><td>Script differences</td><td>Native vs romanized toggle. Fonts that render Tamil/Devanagari in Excalidraw (check the hand-drawn font, which may lack Indic glyphs, so fall back to a normal font)</td></tr>
+</table>
+
+<h2 id="price">7. Pricing and unit cost</h2>
+<table>
+  <tr><th>Plan</th><th>Global</th><th>India</th><th>Includes</th></tr>
+  <tr><td>Free</td><td>$0</td><td>₹0</td><td>2 hrs/month, English only, watermark on export</td></tr>
+  <tr><td>Creator</td><td>$15/mo</td><td>₹399/mo</td><td>10 hrs, all languages, post-show pack</td></tr>
+  <tr><td>Pro</td><td>$29/mo</td><td>₹999/mo</td><td>30 hrs, map translation, overlay, priority models</td></tr>
+</table>
+<p class="muted">Estimated cost per recorded hour: STT ~$0.15–0.50 + live LLM ~$0.30–1.00 + summary ~$0.10 ≈ <b>$0.6–1.6/hr</b>. A Creator user at 10 hrs costs about $6–16 in the worst case, so the live-LLM call frequency needs tuning (batch by utterance, not by word). Verify current vendor prices before launch.</p>
+
+<h2 id="validate">8. Validation before building beyond the spike</h2>
+<ol>
+  <li>Build Phase 0 and run it on 3 public episodes: one English, one Hindi-English, one Tamil-English.</li>
+  <li>Record a 60-second screen capture of the map building itself live. That's your pitch.</li>
+  <li>Send it to 30 podcast hosts (Tamil/Hindi tech, startup, and interview shows first) and ask: <i>“Would you use this on your next recording?”</i> Then book 10 for a live test.</li>
+  <li>Landing page with ₹399/$9 founding-member pre-order.</li>
+  <li><b>Go</b> if ≥3 of 5 testers reuse it on a second episode, or ≥20 pre-orders. Otherwise keep it as a portfolio piece.</li>
+</ol>
+
+<h2 id="decide">9. Decisions I need from you</h2>
+<ol>
+  <li><b>Launch languages:</b> English + Hinglish + Tanglish (recommended), or English-only first?</li>
+  <li><b>Platform:</b> web app first (recommended), or desktop app (easier system-audio capture)?</li>
+  <li><b>Audience:</b> Indian creators first (stronger wedge), or global English podcasters?</li>
+  <li><b>Name</b>, and whether to start Phase 0 now.</li>
+</ol>
+
+<h2>Sources</h2>
+<ul class="muted">
+  <li><a href="https://www.sarvam.ai/speech-to-text">Sarvam speech-to-text (22 Indian languages, Hinglish/Tanglish)</a> · <a href="https://www.sarvam.ai/apis/speech-to-text/hindi">Sarvam Hindi API</a> · <a href="https://www.callmissed.com/blog/best-speech-text-api-indian-languages-2026">Indian-language STT comparison 2026</a></li>
+  <li><a href="https://telenow.ai/blog/deepgram-speech-to-text-models-benchmarks-pricing-and-when-to-use-it/">Deepgram Nova-3 multilingual code-switching languages</a> · <a href="https://arxiv.org/pdf/2605.19069">Code-switching ASR benchmark</a></li>
+  <li><a href="https://www.storyboard18.com/brand-marketing/india-third-largest-market-for-podcast-listeners-globally-yet-only-12-percent-indians-currently-engaged-30314.htm">India third-largest podcast market</a> · <a href="https://www.astuteanalytica.com/index.php/industry-report/india-podcast-market">India podcast market report</a> · <a href="https://www.imarcgroup.com/india-podcasting-market">IMARC India podcasting</a></li>
+  <li>Earlier research: see <code>idea-validation.html</code></li>
+</ul>
+</div>
+</body>
+</html>
